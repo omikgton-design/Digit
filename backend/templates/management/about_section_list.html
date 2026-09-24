@@ -1,0 +1,76 @@
+{% extends "management/base.html" %}
+
+{% block title %}{{ page_title }} | Digit{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div class="page-block">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div class="page-header-title"><h5 class="m-b-10">{{ page_title }}</h5></div>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <a href="{% url 'management:about_section_create' %}" class="btn btn-primary">Шинээр нэмэх</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card tbl-card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th class="management-index-col">№</th>
+              <th>Зураг</th>
+              <th>Гарчиг</th>
+              <th>Дээд шошго</th>
+              <th>Дараалал</th>
+              <th>Төлөв</th>
+              <th>Шинэчилсэн</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for section in sections %}
+              <tr>
+                <td class="management-index-col">{{ sections.start_index|add:forloop.counter0 }}</td>
+                <td>
+                  {% if section.top_image %}
+                    <img src="{{ section.top_image.url }}" alt="{{ section.title }}" class="wid-80 rounded" style="height: 46px; object-fit: cover;">
+                  {% else %}
+                    <span class="text-muted">-</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="fw-semibold">{{ section.title }}</div>
+                  {% if section.description %}<div class="text-muted small">{{ section.description|truncatechars:90 }}</div>{% endif %}
+                </td>
+                <td>{{ section.kicker }}</td>
+                <td>{{ section.sort_order }}</td>
+                <td>
+                  {% if section.is_active %}
+                    <span class="badge bg-light-success text-success">Идэвхтэй</span>
+                  {% else %}
+                    <span class="badge bg-light-secondary text-secondary">Идэвхгүй</span>
+                  {% endif %}
+                </td>
+                <td>{{ section.update_date|date:"Y-m-d H:i" }}</td>
+                <td class="text-end">
+                  <div class="d-flex justify-content-end gap-2 flex-wrap">
+                    <a href="{% url 'management:about_section_edit' section.pk %}" class="btn btn-sm btn-light-primary">Засах</a>
+                    <a href="{% url 'management:about_section_toggle' section.pk %}" class="btn btn-sm btn-light-warning">Төлөв солих</a>
+                    <a href="{% url 'management:about_section_delete' section.pk %}" class="btn btn-sm btn-light-danger">Устгах</a>
+                  </div>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="8" class="text-center text-muted py-4">Бидний тухай мэдээлэл бүртгэгдээгүй байна.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% include "management/includes/pagination.html" with page_obj=sections page_param="page" %}
+    </div>
+  </div>
+{% endblock %}

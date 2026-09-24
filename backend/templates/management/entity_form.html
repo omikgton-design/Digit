@@ -1,0 +1,842 @@
+﻿{% extends "management/base.html" %}
+
+{% block title %}{{ form_title }} | Digit{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div class="page-block"><div class="row align-items-center"><div class="col-md-6"><div class="page-header-title"><h5 class="m-b-10">{{ form_title }}</h5></div></div><div class="col-md-6 text-md-end"><a href="{{ list_url }}" class="btn btn-light-secondary">{{ list_label|default:"Жагсаалт руу буцах" }}</a></div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form_layout == 'about_section' %}
+          <div class="management-media-left-form">
+            <div class="management-media-panel">
+              {% for field in form %}
+                {% if field.name == 'top_image' or field.name == 'bottom_image' %}
+                  <div class="mb-3">
+                    <label class="form-label d-block">{{ field.label }}</label>
+                    <div class="management-logo-card management-logo-card--wide">
+                      <label class="management-logo-picker management-logo-picker--cover" for="{{ field.id_for_label }}">
+                        {% if field.name == 'top_image' and object and object.top_image %}
+                          <img src="{{ object.top_image.url }}" alt="{{ object.title }}">
+                        {% elif field.name == 'bottom_image' and object and object.bottom_image %}
+                          <img src="{{ object.bottom_image.url }}" alt="{{ object.title }}">
+                        {% else %}
+                          <span class="management-logo-placeholder">Зураг сонгох</span>
+                        {% endif %}
+                      </label>
+                      <div class="management-logo-actions">
+                        <label class="btn btn-sm btn-dark mb-0" for="{{ field.id_for_label }}">Зураг солих</label>
+                        <span class="management-logo-file">
+                          {% if field.name == 'top_image' and object and object.top_image %}Зураг бэлэн{% elif field.name == 'bottom_image' and object and object.bottom_image %}Зураг бэлэн{% else %}Зураг оруулаагүй{% endif %}
+                        </span>
+                      </div>
+                      <div class="management-logo-input">{{ field.as_widget }}</div>
+                    </div>
+                    {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                    {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <div class="management-media-fields">
+              <div class="management-form-section">
+                <h6 class="management-form-section-title">Үндсэн мэдээлэл</h6>
+                <div class="row g-3">
+                  {% for field in form %}
+                    {% if field.name == 'kicker' or field.name == 'title' %}
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                  {% for field in form %}
+                    {% if field.name == 'description' %}
+                      <div class="col-12">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+
+              <div class="management-form-section">
+                <h6 class="management-form-section-title">Давуу тал ба дугуйн текст</h6>
+                <div class="row g-3">
+                  {% for field in form %}
+                    {% if field.name == 'feature_title' or field.name == 'feature_text' or field.name == 'circle_right_text' or field.name == 'circle_left_text' %}
+                      <div class="{% if field.name == 'feature_text' %}col-12{% else %}col-md-6{% endif %}">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+
+              <div class="management-form-section mb-0">
+                <h6 class="management-form-section-title">Тохиргоо</h6>
+                <div class="row g-3 align-items-end">
+                  {% for field in form %}
+                    {% if field.name == 'button_text' or field.name == 'button_url' or field.name == 'sort_order' %}
+                      <div class="col-md-4">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                  {% for field in form %}
+                    {% if field.name == 'is_active' %}
+                      <div class="col-md-4">
+                        <div class="form-check form-switch mb-3 management-inline-switch">
+                          {{ field }}
+                          <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% elif form_layout == 'slide' %}
+          <div class="management-slide-form">
+            <div class="management-slide-preview-panel">
+              {% for field in form %}
+                {% if field.name == 'image' %}
+                  <div class="mb-3">
+                    <label class="form-label d-block">{{ field.label }}</label>
+                    <div class="management-slide-image-card">
+                      <label class="management-slide-image-picker" for="{{ field.id_for_label }}">
+                        {% if object and object.image %}
+                          <img src="{{ object.image.url }}" alt="{{ object.title }}">
+                        {% else %}
+                          <span class="management-logo-placeholder">Зураг сонгох</span>
+                        {% endif %}
+                      </label>
+                      <div class="management-logo-actions">
+                        <label class="btn btn-sm btn-dark mb-0" for="{{ field.id_for_label }}">Зураг солих</label>
+                        {% if object and object.image %}
+                          <span class="management-logo-file">1920x600 орчим зураг тохиромжтой</span>
+                        {% else %}
+                          <span class="management-logo-file">Зураг оруулаагүй</span>
+                        {% endif %}
+                      </div>
+                      <div class="management-logo-input">{{ field.as_widget }}</div>
+                    </div>
+                    {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                    {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            <div class="management-slide-fields">
+              <div class="management-form-section">
+                <h6 class="management-form-section-title">Үндсэн мэдээлэл</h6>
+                <div class="row g-3">
+                  {% for field in form %}
+                    {% if field.name == 'partner_label' or field.name == 'title' %}
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                  {% for field in form %}
+                    {% if field.name == 'description' %}
+                      <div class="col-12">
+                        <div class="mb-0">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+
+              <div class="management-form-section mb-0">
+                <h6 class="management-form-section-title">Тохиргоо</h6>
+                <div class="row g-3 align-items-end">
+                  {% for field in form %}
+                    {% if field.name == 'link_url' or field.name == 'sort_order' %}
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                  {% for field in form %}
+                    {% if field.name == 'is_active' %}
+                      <div class="col-md-6">
+                        <div class="form-check form-switch mb-3 management-inline-switch">
+                          {{ field }}
+                          <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% elif form_layout == 'footer_content' %}
+          <div class="management-media-left-form">
+            <div class="management-media-panel">
+              {% for field in form %}
+                {% if field.name == 'image' %}
+                  <div class="mb-3">
+                    <label class="form-label d-block">{{ field.label }}</label>
+                    <div class="management-logo-card management-logo-card--wide">
+                      <label class="management-logo-picker management-logo-picker--cover" for="{{ field.id_for_label }}">
+                        {% if object and object.image %}
+                          <img src="{{ object.image.url }}" alt="{{ object.title }}">
+                        {% else %}
+                          <span class="management-logo-placeholder">Зураг сонгох</span>
+                        {% endif %}
+                      </label>
+                      <div class="management-logo-actions">
+                        <label class="btn btn-sm btn-dark mb-0" for="{{ field.id_for_label }}">Зураг солих</label>
+                        {% if object and object.image %}
+                          <span class="management-logo-file">Зураг бэлэн</span>
+                        {% else %}
+                          <span class="management-logo-file">Зураг оруулаагүй</span>
+                        {% endif %}
+                      </div>
+                      <div class="management-logo-input">{{ field.as_widget }}</div>
+                    </div>
+                    {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                    {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <div class="management-media-fields">
+              <div class="management-form-section">
+                <h6 class="management-form-section-title">Үндсэн мэдээлэл</h6>
+                <div class="row g-3">
+                  {% for field in form %}
+                    {% if field.name == 'key' or field.name == 'title' %}
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                  {% for field in form %}
+                    {% if field.name == 'is_active' %}
+                      <div class="col-md-6">
+                        <div class="form-check form-switch mb-3 management-inline-switch">
+                          {{ field }}
+                          <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+              {% for field in form %}
+                {% if field.name == 'content' %}
+                  <div class="mb-0 management-footer-content-editor">
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                    {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% elif form_layout == 'partner' %}
+          <div class="management-partner-form">
+            <div class="management-partner-logo-panel">
+              {% for field in form %}
+                {% if field.name == 'logo' %}
+                  <div class="mb-3">
+                    <label class="form-label d-block">{{ field.label }}</label>
+                    <div class="management-logo-card management-logo-card--wide">
+                      <label class="management-logo-picker" for="{{ field.id_for_label }}">
+                        {% if object and object.logo %}
+                          <img src="{{ object.logo.url }}" alt="{{ object.name }}">
+                        {% else %}
+                          <span class="management-logo-placeholder">Лого сонгох</span>
+                        {% endif %}
+                      </label>
+                      <div class="management-logo-actions">
+                        <label class="btn btn-sm btn-dark mb-0" for="{{ field.id_for_label }}">Лого солих</label>
+                        {% if object and object.logo %}
+                          <span class="management-logo-file">Лого бэлэн</span>
+                        {% else %}
+                          <span class="management-logo-file">Лого оруулаагүй</span>
+                        {% endif %}
+                      </div>
+                      <div class="management-logo-input">{{ field.as_widget }}</div>
+                    </div>
+                    {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                    {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            <div class="management-partner-fields">
+              <div class="row g-3">
+                {% for field in form %}
+                  {% if field.name != 'logo' %}
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                      <div class="col-md-6">
+                        <div class="form-check form-switch mb-3 mt-4">
+                          {{ field }}
+                          <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% else %}
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% elif form_layout == 'single_image_left' %}
+          <div class="management-media-left-form">
+            <div class="management-media-panel">
+              {% for field in form %}
+                {% if field.name == 'image' %}
+                  <div class="mb-3">
+                    <label class="form-label d-block">{{ field.label }}</label>
+                    <div class="management-logo-card management-logo-card--wide">
+                      <label class="management-logo-picker management-logo-picker--cover" for="{{ field.id_for_label }}">
+                        {% if object and object.image %}
+                          <img src="{{ object.image.url }}" alt="{{ object.title }}">
+                        {% else %}
+                          <span class="management-logo-placeholder">Зураг сонгох</span>
+                        {% endif %}
+                      </label>
+                      <div class="management-logo-actions">
+                        <label class="btn btn-sm btn-dark mb-0" for="{{ field.id_for_label }}">Зураг солих</label>
+                        {% if object and object.image %}
+                          <span class="management-logo-file">Зураг бэлэн</span>
+                        {% else %}
+                          <span class="management-logo-file">Зураг оруулаагүй</span>
+                        {% endif %}
+                      </div>
+                      <div class="management-logo-input">{{ field.as_widget }}</div>
+                    </div>
+                    {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                    {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <div class="management-media-fields">
+              <div class="row g-3">
+                {% for field in form %}
+                  {% if field.name != 'image' %}
+                    {% if field.name == 'description' or field.name == 'introduction' or field.name == 'client_organizations' or field.name == 'content' %}
+                      <div class="col-12">
+                        <div class="mb-3 management-fullwidth-editor">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% elif field.field.widget.input_type == 'checkbox' %}
+                      <div class="col-md-6 col-lg-4">
+                        <div class="form-check form-switch mb-3 mt-4">
+                          {{ field }}
+                          <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% else %}
+                      <div class="col-md-6 col-lg-4">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% elif current_section == 'customers' %}
+          <div class="row g-4 align-items-start">
+            <div class="col-xl-4">
+              <div class="management-side-card">
+                {% for field in form %}
+                  {% if field.name == 'logo' %}
+                    <div class="mb-4">
+                      <label class="form-label d-block">{{ field.label }}</label>
+                      <div class="management-logo-card management-logo-card--wide">
+                        <label class="management-logo-picker" for="{{ field.id_for_label }}">
+                          {% if object and object.logo %}
+                            <img src="{{ object.logo.url }}" alt="{{ object.name }}">
+                          {% else %}
+                            <span class="management-logo-placeholder">{% if customer_form_type == 'person' %}Зураг сонгох{% else %}Лого сонгох{% endif %}</span>
+                          {% endif %}
+                        </label>
+                        <div class="management-logo-actions">
+                          <label class="btn btn-sm btn-dark mb-0" for="{{ field.id_for_label }}">{% if customer_form_type == 'person' %}Зураг солих{% else %}Лого солих{% endif %}</label>
+                          {% if object and object.logo %}
+                            <span class="management-logo-file">{% if customer_form_type == 'person' %}Зураг бэлэн{% else %}Лого бэлэн{% endif %}</span>
+                          {% else %}
+                            <span class="management-logo-file">{% if customer_form_type == 'person' %}Зураг оруулаагүй{% else %}Лого оруулаагүй{% endif %}</span>
+                          {% endif %}
+                        </div>
+                        <div class="management-logo-input">{{ field.as_widget }}</div>
+                      </div>
+                      {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                      {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="col-xl-8">
+              <div class="management-form-section">
+                <h6 class="management-form-section-title">Үндсэн мэдээлэл</h6>
+                <div class="row g-3 align-items-end">
+                  {% for field in form %}
+                    {% if field.name == 'name' %}
+                      <div class="col-md-8">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                  <div class="col-md-4">
+                    <div class="management-switch-row">
+                      {% for field in form %}
+                        {% if field.name == 'is_staff' or field.name == 'is_active' %}
+                        <div class="form-check form-switch mb-3 management-inline-switch">
+                          {{ field }}
+                          <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="management-form-section">
+                <h6 class="management-form-section-title">Холбоо барих мэдээлэл</h6>
+                <div class="row g-3">
+                  {% for field in form %}
+                    {% if field.name == 'email' or field.name == 'phone' or field.name == 'website' %}
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                  {% for field in form %}
+                    {% if field.name == 'contact_person_name' or field.name == 'contact_person_phone' %}
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                  {% for field in form %}
+                    {% if field.name == 'address' %}
+                      <div class="col-12">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+
+              <div class="management-form-section">
+                <h6 class="management-form-section-title">Нэвтрэх мэдээлэл</h6>
+                <div class="row g-3">
+                  {% for field in form %}
+                    {% if field.name == 'username' or field.name == 'password' or field.name == 'password_confirm' %}
+                      <div class="col-md-4">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% elif current_section == 'softwares' or current_section == 'advisories' %}
+          <div class="row g-4 align-items-start">
+            <div class="col-xl-4">
+              <div class="management-side-card management-media-panel">
+                {% if form.new_images %}
+                  <div class="mb-4 management-multi-image-upload">
+                    <label class="form-label" for="{{ form.new_images.id_for_label }}">{{ form.new_images.label }}</label>
+                    {{ form.new_images }}
+                    <div class="management-selected-image-grid" aria-live="polite"></div>
+                    {% for error in form.new_images.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                  </div>
+                {% endif %}
+                {% if object_images %}
+                  <div class="mb-0">
+                    <label class="form-label">Одоогийн зураг</label>
+                    <div class="management-image-grid management-image-grid--side">
+                      {% for image in object_images %}
+                        <label class="management-image-card">
+                          {% if image.thumbnail %}
+                            <img src="{{ image.thumbnail.url }}" alt="">
+                          {% elif image.image %}
+                            <img src="{{ image.image.url }}" alt="">
+                          {% endif %}
+                          {% if image.id %}
+                            <span class="form-check mt-2 d-block">
+                              <input class="form-check-input" type="checkbox" name="delete_image_ids" value="{{ image.id }}">
+                              <span class="form-check-label">Устгах</span>
+                            </span>
+                          {% endif %}
+                        </label>
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+            <div class="col-xl-8">
+              <div class="row g-3">
+                {% for field in form %}
+                  {% if field.name != 'new_images' and not field.field.tree_nodes %}
+                    {% if field.name == 'logo' %}
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label class="form-label d-block">{{ field.label }}</label>
+                          <div class="management-logo-card">
+                            <label class="management-logo-picker" for="{{ field.id_for_label }}">
+                              {% if object and object.logo %}
+                                <img src="{{ object.logo.url }}" alt="{{ object.name }}">
+                              {% else %}
+                                <span class="management-logo-placeholder">Лого сонгох</span>
+                              {% endif %}
+                            </label>
+                            <div class="management-logo-actions">
+                              <label class="btn btn-sm btn-dark mb-0" for="{{ field.id_for_label }}">Лого солих</label>
+                              {% if object and object.logo %}
+                                <span class="management-logo-file">Лого бэлэн</span>
+                              {% else %}
+                                <span class="management-logo-file">Лого оруулаагүй</span>
+                              {% endif %}
+                            </div>
+                            <div class="management-logo-input">{{ field.as_widget }}</div>
+                          </div>
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% elif field.field.widget.input_type == 'checkbox' %}
+                      <div class="col-md-6">
+                        <div class="form-check form-switch mb-3 mt-4">
+                          {{ field }}
+                          <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% elif field.name == 'description' or field.name == 'introduction' or field.name == 'client_organizations' or field.name == 'content' %}
+                      <div class="col-12">
+                        <div class="mb-3 management-fullwidth-editor">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% else %}
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {{ field }}
+                          {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="col-xl-12">
+              <div class="management-side-card management-selector-card">
+                <h6 class="management-selector-title">Салбарууд</h6>
+                {% for field in form %}
+                  {% if field.field.tree_nodes %}
+                    <div class="mb-4">
+                      <label class="form-label d-block mb-2">{{ field.label }}</label>
+                      <div class="management-tree-selector">
+                        {% for node in field.field.tree_nodes %}
+                          <details class="management-tree-group" {% if node.expanded %}open{% endif %}>
+                            <summary>
+                              <span>{{ node.name }}</span>
+                              <span class="management-tree-arrow"></span>
+                            </summary>
+                            <div class="management-tree-children">
+                              <label class="management-tree-option management-tree-option--root">
+                                <input type="{{ field.field.tree_input_type }}" name="{{ field.html_name }}" value="{{ node.id }}" {% if node.selected %}checked{% endif %}>
+                                <span>{{ node.name }}</span>
+                              </label>
+                              {% if node.children %}
+                                {% for child in node.children %}
+                                  <label class="management-tree-option management-tree-option--child">
+                                    <input type="{{ field.field.tree_input_type }}" name="{{ field.html_name }}" value="{{ child.id }}" {% if child.selected %}checked{% endif %}>
+                                    <span>{{ child.name }}</span>
+                                  </label>
+                                {% endfor %}
+                              {% endif %}
+                            </div>
+                          </details>
+                        {% endfor %}
+                      </div>
+                      {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                      {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="row g-3">
+            {% for field in form %}
+              {% if field.name != 'new_images' %}
+                {% if field.name == 'logo' %}
+                  <div class="col-md-6 col-lg-4">
+                    <div class="mb-3">
+                      <label class="form-label d-block">{{ field.label }}</label>
+                      <div class="management-logo-card">
+                        <label class="management-logo-picker" for="{{ field.id_for_label }}">
+                          {% if object and object.logo %}
+                            <img src="{{ object.logo.url }}" alt="{{ object.name }}">
+                          {% else %}
+                            <span class="management-logo-placeholder">Лого сонгох</span>
+                          {% endif %}
+                        </label>
+                        <div class="management-logo-actions">
+                          <label class="btn btn-sm btn-dark mb-0" for="{{ field.id_for_label }}">Лого солих</label>
+                          {% if object and object.logo %}
+                            <span class="management-logo-file">Лого бэлэн</span>
+                          {% else %}
+                            <span class="management-logo-file">Лого оруулаагүй</span>
+                          {% endif %}
+                        </div>
+                        <div class="management-logo-input">{{ field.as_widget }}</div>
+                      </div>
+                      {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                      {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+                  </div>
+                {% elif field.name == 'image' %}
+                  <div class="col-md-6 col-lg-4">
+                    <div class="mb-3">
+                      <label class="form-label d-block">{{ field.label }}</label>
+                      <div class="management-logo-card management-logo-card--wide">
+                        <label class="management-logo-picker" for="{{ field.id_for_label }}">
+                          {% if object and object.image %}
+                            <img src="{{ object.image.url }}" alt="{{ object.title }}">
+                          {% else %}
+                            <span class="management-logo-placeholder">Зураг сонгох</span>
+                          {% endif %}
+                        </label>
+                        <div class="management-logo-actions">
+                          <label class="btn btn-sm btn-dark mb-0" for="{{ field.id_for_label }}">Зураг солих</label>
+                          {% if object and object.image %}
+                            <span class="management-logo-file">Зураг бэлэн</span>
+                          {% else %}
+                            <span class="management-logo-file">Зураг оруулаагүй</span>
+                          {% endif %}
+                        </div>
+                        <div class="management-logo-input">{{ field.as_widget }}</div>
+                      </div>
+                      {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                      {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+                  </div>
+                {% elif field.widget_type == 'checkboxselectmultiple' %}
+                  <div class="col-12">
+                    <div class="mb-3">
+                      <label class="form-label d-block">{{ field.label }}</label>
+                      <div class="management-choice-grid">{{ field }}</div>
+                      {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                      {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+                  </div>
+                {% elif field.name == 'description' or field.name == 'introduction' or field.name == 'client_organizations' or field.name == 'content' %}
+                  <div class="col-12">
+                    <div class="mb-3 management-fullwidth-editor">
+                      <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                      {{ field }}
+                      {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                      {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+                  </div>
+                {% elif field.field.widget.input_type == 'checkbox' %}
+                  <div class="col-md-6 col-lg-4">
+                    <div class="form-check form-switch mb-3 mt-4">
+                      {{ field }}
+                      <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                      {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                      {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+                  </div>
+                {% else %}
+                  <div class="col-md-6 col-lg-4">
+                    <div class="mb-3">
+                      <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                      {{ field }}
+                      {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                      {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+                  </div>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if form.new_images and current_section != 'softwares' and current_section != 'advisories' %}
+          <div class="col-12 mt-3">
+            <div class="mb-3 management-multi-image-upload">
+              <label class="form-label" for="{{ form.new_images.id_for_label }}">{{ form.new_images.label }}</label>
+              {{ form.new_images }}
+              <div class="management-selected-image-grid" aria-live="polite"></div>
+              {% for error in form.new_images.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if object_images and current_section != 'softwares' and current_section != 'advisories' %}
+          <div class="col-12 mt-3">
+            <div class="mb-3">
+              <label class="form-label">Одоогийн зураг</label>
+              <div class="management-image-grid">
+                {% for image in object_images %}
+                  <label class="management-image-card">
+                    {% if image.thumbnail %}
+                      <img src="{{ image.thumbnail.url }}" alt="">
+                    {% elif image.image %}
+                      <img src="{{ image.image.url }}" alt="">
+                    {% endif %}
+                    {% if image.id %}
+                      <span class="form-check mt-2 d-block">
+                        <input class="form-check-input" type="checkbox" name="delete_image_ids" value="{{ image.id }}">
+                        <span class="form-check-label">Устгах</span>
+                      </span>
+                    {% endif %}
+                  </label>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" class="btn btn-primary">Хадгалах</button>
+          <a href="{{ list_url }}" class="btn btn-light-secondary">Болих</a>
+          {% if delete_url %}
+            <a href="{{ delete_url }}" class="btn btn-light-danger ms-auto">Устгах</a>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    if (window.tinymce) {
+      tinymce.init({
+        selector: 'textarea.js-richtext',
+        menubar: false,
+        height: 260,
+        plugins: 'lists link code',
+        toolbar: 'undo redo | blocks | bold italic | bullist numlist | link | code'
+      });
+    }
+  </script>
+{% endblock %}

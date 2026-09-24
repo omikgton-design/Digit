@@ -1,0 +1,10 @@
+﻿{% extends "management/base.html" %}
+
+{% block title %}{{ page_title }} | Digit{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div class="page-block"><div class="row align-items-center"><div class="col-md-6"><div class="page-header-title"><h5 class="m-b-10">{{ page_title }}</h5></div></div><div class="col-md-6 text-md-end"><a href="{% url 'management:partner_create' %}" class="btn btn-primary">Шинээр нэмэх</a></div></div></div>
+  </div>
+  <div class="card tbl-card"><div class="card-body"><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th class="management-index-col">№</th><th>Байгууллага</th><th>Линк</th><th>Дараалал</th><th>Төлөв</th><th>Шинэчилсэн</th><th></th></tr></thead><tbody>{% for partner in partners %}<tr><td class="management-index-col">{{ partners.start_index|add:forloop.counter0 }}</td><td><div class="d-flex align-items-center gap-2">{% if partner.logo %}<img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="wid-40 rounded">{% endif %}<span class="fw-semibold">{{ partner.name }}</span></div></td><td>{% if partner.link_url %}<a href="{{ partner.link_url }}" target="_blank" rel="noreferrer">{{ partner.link_url }}</a>{% else %}<span class="text-muted">-</span>{% endif %}</td><td>{{ partner.sort_order }}</td><td>{% if partner.is_active %}<span class="badge bg-light-success text-success">Идэвхтэй</span>{% else %}<span class="badge bg-light-secondary text-secondary">Идэвхгүй</span>{% endif %}</td><td>{{ partner.update_date|date:"Y-m-d H:i" }}</td><td class="text-end"><div class="d-flex justify-content-end gap-2 flex-wrap"><a href="{% url 'management:partner_edit' partner.pk %}" class="btn btn-sm btn-light-primary">Засах</a><a href="{% url 'management:partner_delete' partner.pk %}" class="btn btn-sm btn-light-danger">Устгах</a></div></td></tr>{% empty %}<tr><td colspan="7" class="text-center text-muted py-4">Хамтрагч байгууллага бүртгэгдээгүй байна.</td></tr>{% endfor %}</tbody></table></div>{% include "management/includes/pagination.html" with page_obj=partners page_param="page" %}</div></div>
+{% endblock %}

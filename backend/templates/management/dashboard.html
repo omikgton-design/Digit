@@ -1,0 +1,44 @@
+﻿{% extends "management/base.html" %}
+
+{% block title %}Хяналтын самбар | Digit{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div class="page-block">
+      <div class="row align-items-center">
+        <div class="col-md-12">
+          <div class="page-header-title"><h5 class="m-b-10">Хяналтын самбар</h5></div>
+          <ul class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'management:dashboard' %}">Digit</a></li><li class="breadcrumb-item" aria-current="page">Удирдлага</li></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    {% for metric in metrics %}
+      <div class="col-md-6 col-xl-3"><div class="card"><div class="card-body"><h6 class="mb-2 f-w-400 text-muted">{{ metric.label }}</h6><h4 class="mb-2">{{ metric.value }}</h4><p class="mb-0 text-muted text-sm">{{ metric.meta }}</p></div></div></div>
+    {% endfor %}
+    <div class="col-xl-8">
+      <div class="card tbl-card">
+        <div class="card-header"><h5>Сүүлд оруулсан мэдээллүүд</h5></div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead><tr><th class="management-index-col">№</th><th>Төрөл</th><th>Гарчиг</th><th>Эзэмшигч</th><th>Огноо</th><th></th></tr></thead>
+              <tbody>
+                {% for item in recent_contents %}
+                  <tr><td class="management-index-col">{{ forloop.counter }}</td><td>{{ item.kind }}</td><td>{{ item.title }}</td><td>{{ item.owner }}</td><td>{{ item.created_date|date:"Y-m-d H:i" }}</td><td class="text-end"><a href="{{ item.edit_url }}" class="btn btn-sm btn-light-primary">Нээх</a></td></tr>
+                {% empty %}
+                  <tr><td colspan="6" class="text-center text-muted py-4">Оруулсан мэдээлэл алга.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-4">
+      <div class="card"><div class="card-header"><h5>Багцын хуваарилалт</h5></div><div class="list-group list-group-flush">{% for tier in tier_breakdown %}<div class="list-group-item d-flex align-items-center justify-content-between"><span>{{ tier.label }}</span><strong>{{ tier.total }}</strong></div>{% empty %}<div class="list-group-item text-muted">Өгөгдөл алга.</div>{% endfor %}</div></div>
+      <div class="card"><div class="card-header"><h5>Сүүлд нэмэгдсэн хэрэглэгчид</h5></div><div class="list-group list-group-flush">{% for customer in recent_customers %}<a href="{% url 'management:customer_detail' customer.pk %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"><span>{{ customer.name }}</span><span class="badge bg-light-secondary text-secondary">{{ customer.type|upper }}</span></a>{% empty %}<div class="list-group-item text-muted">Хэрэглэгч алга.</div>{% endfor %}</div></div>
+    </div>
+  </div>
+{% endblock %}

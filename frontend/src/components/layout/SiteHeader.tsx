@@ -1,0 +1,278 @@
+import { FormEvent, useEffect, useState } from "react";
+import type { AdvisoryFacets, AuthResponse, Category, HomeSlide } from "../../types";
+import type { Page } from "../../root/types";
+import { stripRichText } from "../../utils/richText";
+
+const fallbackSlides: HomeSlide[] = [
+  {
+    id: -1,
+    image_url: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?q=80&w=1920&auto=format&fit=crop",
+    partner_label: "Digit",
+    title: "БИЗНЕСИЙГ ХӨГЖҮҮЛЭХ ШИЙДЛИЙН НЭГ ДОРООС",
+    description: "Програм хангамж, зөвлөх үйлчилгээ, нийтлэлийг нэг платформоос хайж, харьцуулж сонгоорой.",
+    link_url: "",
+    sort_order: 0,
+  },
+  {
+    id: -2,
+    image_url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1920&auto=format&fit=crop",
+    partner_label: "Програм хангамж",
+    title: "ТАНАЙ БАЙГУУЛЛАГАД ТОХИРОХ СИСТЕМҮҮД",
+    description: "CRM, ERP, POS болон салбарын шийдлүүдийг ангиллаар нь цэгцтэй үзнэ.",
+    link_url: "",
+    sort_order: 1,
+  },
+  {
+    id: -3,
+    image_url: "https://images.unsplash.com/photo-1556740758-90de374c12ad?q=80&w=1920&auto=format&fit=crop",
+    partner_label: "Зөвлөх үйлчилгээ",
+    title: "МЭРГЭЖЛИЙН ҮЙЛЧИЛГЭЭГ ХУРДАН ОЛ",
+    description: "Хэрэгцээндээ нийцсэн зөвлөх байгууллага, үйлчилгээний мэдээллийг нэг дороос аваарай.",
+    link_url: "",
+    sort_order: 2,
+  }
+];
+
+type Props = {
+  page: Page;
+  auth: AuthResponse | null;
+  searchOpen: boolean;
+  programParents: Category[];
+  advisoryParents: Category[];
+  articleCategories: Category[];
+  advisoryServiceTypes: AdvisoryFacets["service_types"];
+  slides: HomeSlide[];
+  onPageChange: (page: Page) => void;
+  onSearchToggle: () => void;
+  onSearchSubmit: (query: string) => void;
+  onLogout: () => void;
+};
+
+export function SiteHeader({
+  page,
+  auth,
+  searchOpen,
+  programParents,
+  advisoryParents,
+  articleCategories,
+  advisoryServiceTypes,
+  slides,
+  onPageChange,
+  onSearchToggle,
+  onSearchSubmit,
+  onLogout
+}: Props) {
+  const [searchText, setSearchText] = useState("");
+  const visibleSlides = slides.length ? slides : fallbackSlides;
+
+  useEffect(() => {
+    if (!searchOpen) setSearchText("");
+  }, [searchOpen]);
+
+  const submitSearch = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!searchOpen) {
+      onSearchToggle();
+      return;
+    }
+    const query = searchText.trim();
+    if (query) onSearchSubmit(query);
+  };
+
+  return (
+    <header className={`hero ${page === "home" ? "has-slider" : "hero-compact"}`}>
+      <nav className="navbar navbar-expand-lg navbar-dark" id="mainNavbar">
+        <div className="container">
+          <div className="nav-shell">
+            <a className="navbar-brand" href="/" onClick={(e) => { e.preventDefault(); onPageChange("home"); }}>
+              <img className="logo-mark logo-default" src="/logo.png" alt="Digit logo" />
+              <img className="logo-mark logo-scrolled" src="/logo_blank.png" alt="Digit logo" />
+            </a>
+            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+              <span className="navbar-toggler-icon"></span>
+            </button>
+            <div className="collapse navbar-collapse" id="mainNav">
+              <ul className="navbar-nav me-auto gap-lg-4">
+                <li className="nav-item dropdown mega">
+                  <a
+                    className="nav-link dropdown-toggle"
+                    href="/softwares"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onPageChange("softwares");
+                    }}
+                  >
+                    Програм хангамж
+                  </a>
+                  <div className="dropdown-menu mega-menu shadow-lg">
+                    <div className="mega-grid">
+                      <div className="mega-col">
+                        <h6>Төрлөөр</h6>
+                        {programParents.map((item) => (
+                          <a key={item.id} className="dropdown-item" href={`/softwares?program_type=${item.id}`}>{item.name}</a>
+                        ))}
+                      </div>
+                      <div className="mega-col">
+                        <h6>Салбараар</h6>
+                        {advisoryParents.map((item) => (
+                          <a key={item.id} className="dropdown-item" href={`/softwares?advisory_sector=${item.id}`}>{item.name}</a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li className="nav-item dropdown mega">
+                  <a
+                    className="nav-link dropdown-toggle"
+                    href="/advisories"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onPageChange("advisories");
+                    }}
+                  >
+                    Зөвлөх үйлчилгээ
+                  </a>
+                  <div className="dropdown-menu mega-menu shadow-lg">
+                    <div className="mega-grid" style={{ gridTemplateColumns: "minmax(0, 1fr)" }}>
+                      <div className="mega-col">
+                        <h6>Төрлүүд</h6>
+                        {advisoryServiceTypes.map((item) => (
+                          <a key={item.id} className="dropdown-item" href={`/advisories?service_type=${item.id}`}>
+                            {item.name}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li className="nav-item dropdown mega">
+                  <a className="nav-link dropdown-toggle" href="/articles" onClick={(e) => { e.preventDefault(); onPageChange("articles"); }}>
+                    Нийтлэл
+                  </a>
+                  <div className="dropdown-menu mega-menu shadow-lg article-mega-menu">
+                    <div className="mega-grid" style={{ gridTemplateColumns: "minmax(0, 1fr)" }}>
+                      <div className="mega-col">
+                        <h6>Нийтлэлийн төрлүүд</h6>
+                        {articleCategories.map((item) => (
+                          <a key={item.id} className="dropdown-item" href={`/articles?article_type=${item.id}`}>
+                            {item.name}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <div className="nav-right d-none d-lg-flex align-items-center gap-3">
+                <div className={`call-box ${auth ? "" : "call-box-login"}`}>
+                  {auth ? (
+                    <span className="call-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" role="img" aria-label="User">
+                        <path d="M12 12c2.8 0 5-2.2 5-5s-2.2-5-5-5-5 2.2-5 5 2.2 5 5 5zm0 2c-4.4 0-8 2.2-8 5v2h16v-2c0-2.8-3.6-5-8-5z" fill="currentColor" />
+                      </svg>
+                    </span>
+                  ) : null}
+                  <div className="call-action">
+                    {auth ? (
+                      <div className="dropdown dropdown-account">
+                        <button className="call-login-btn dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                          {auth.user?.email || "Хэрэглэгч"}
+                        </button>
+                        <ul className="dropdown-menu dropdown-menu-end">
+                          <li><a className="dropdown-item" href="/profile" onClick={(e) => { e.preventDefault(); onPageChange("profile"); }}>Миний бүртгэл</a></li>
+                          <li><hr className="dropdown-divider" /></li>
+                          <li><a className="dropdown-item" href="/" onClick={(e) => { e.preventDefault(); onLogout(); }}>Гарах</a></li>
+                        </ul>
+                      </div>
+                    ) : (
+                      <a className="call-login-btn" href="/login" onClick={(e) => { e.preventDefault(); onPageChange("login"); }}>Нэвтрэх</a>
+                    )}
+                  </div>
+                </div>
+                <form className="nav-search" onSubmit={submitSearch}>
+                  <button className="btn btn-search" type="submit" aria-label="Search">
+                    <span className="search-icon">⌕</span>
+                  </button>
+                  <input
+                    type="text"
+                    className={`search-input ${searchOpen ? "show" : ""}`}
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    placeholder="Хайх..."
+                  />
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      {page === "home" ? (
+        <div className="hero-slider swiper" key={visibleSlides.map((slide) => slide.id).join("-")}>
+          <div className="swiper-wrapper">
+            {visibleSlides.map((slide) => (
+              <div className="swiper-slide" key={slide.id}>
+                <img src={slide.image_url} alt={slide.title} />
+                <div className="home-hero-panel">
+                  <div className="home-hero-partner">
+                    <span className="home-hero-partner-icon" aria-hidden="true">
+                      <i className="fas fa-layer-group"></i>
+                    </span>
+                    <span>{slide.partner_label || "Digit"}</span>
+                  </div>
+                  <h1>{slide.title}</h1>
+                  <p>{stripRichText(slide.description)}</p>
+                  <div className="home-store-row" aria-label="Апп татах холбоосууд">
+                    <a className="home-store-badge" href="#" aria-label="App Store">
+                      <i className="fab fa-apple" aria-hidden="true"></i>
+                      <span>App Store</span>
+                    </a>
+                    <a className="home-store-badge" href="#" aria-label="Google Play">
+                      <i className="fab fa-google-play" aria-hidden="true"></i>
+                      <span>Google Play</span>
+                    </a>
+                    <a className="home-store-badge" href="#" aria-label="AppGallery">
+                      <i className="fas fa-mobile-alt" aria-hidden="true"></i>
+                      <span>AppGallery</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="swiper-button-prev"></div>
+          <div className="swiper-button-next"></div>
+          <div className="hero-pagination swiper-pagination"></div>
+        </div>
+      ) : (
+        <div className="page-hero">
+          <div className="page-hero-overlay"></div>
+          <div className="page-hero-content container">
+            <div className="page-hero-text">
+              <h1 className="page-hero-title">
+                {page === "login"
+                  ? "Нэвтрэх"
+                  : page === "signup"
+                    ? "Бүртгүүлэх"
+                    : page === "softwares"
+                        ? "Програм хангамжийн жагсаалт"
+                        : page === "software-detail"
+                          ? "Програмын дэлгэрэнгүй"
+                        : page === "advisories"
+                          ? "Зөвлөх үйлчилгээний жагсаалт"
+                        : page === "advisory-detail"
+                          ? "Зөвлөх үйлчилгээний дэлгэрэнгүй"
+                          : page === "articles"
+                            ? "Нийтлэлийн жагсаалт"
+                            : page === "article-detail"
+                              ? "Нийтлэлийн дэлгэрэнгүй"
+                              : page === "search"
+                                ? "Хайлтын үр дүн"
+                                : "Миний бүртгэл"}
+              </h1>
+            </div>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}

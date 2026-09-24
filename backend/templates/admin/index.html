@@ -1,0 +1,36 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="dashboard-grid">
+  {% for app in app_list %}
+  <section class="dashboard-card app-{{ app.app_label }} module">
+    <header class="card-head">
+      <h2><a href="{{ app.app_url }}">{{ app.name }}</a></h2>
+    </header>
+    <ul class="model-list">
+      {% for model in app.models %}
+      <li class="model-row model-{{ model.object_name|lower }}">
+        {% if model.admin_url %}
+        <a class="model-name" href="{{ model.admin_url }}">{{ model.name }}</a>
+        {% else %}
+        <span class="model-name">{{ model.name }}</span>
+        {% endif %}
+        <div class="row-actions">
+          {% if model.add_url %}
+          <a class="action-pill addlink" href="{{ model.add_url }}">Add</a>
+          {% endif %}
+          {% if model.admin_url and model.view_only %}
+          <a class="action-pill viewlink" href="{{ model.admin_url }}">View</a>
+          {% elif model.admin_url %}
+          <a class="action-pill changelink" href="{{ model.admin_url }}">Manage</a>
+          {% endif %}
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% empty %}
+  <p>No admin apps available.</p>
+  {% endfor %}
+</div>
+{% endblock %}

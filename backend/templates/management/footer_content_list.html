@@ -1,0 +1,31 @@
+﻿{% extends "management/base.html" %}
+
+{% block title %}Хөл цэс | Digit{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div class="page-block"><div class="row align-items-center"><div class="col-md-6"><div class="page-header-title"><h5 class="m-b-10">Хөл цэс</h5></div></div></div></div>
+  </div>
+  <div class="card tbl-card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead><tr><th class="management-index-col">№</th><th>Цэс</th><th>Гарчиг</th><th>Зураг</th><th>Текст</th><th>Төлөв</th><th></th></tr></thead>
+          <tbody>
+            {% for row in rows %}
+              <tr>
+                <td class="management-index-col">{{ forloop.counter }}</td>
+                <td>{{ row.menu_label }}</td>
+                <td>{{ row.title }}</td>
+                <td>{% if row.has_image %}<span class="badge bg-light-success text-success">Оруулсан</span>{% else %}<span class="badge bg-light-secondary text-secondary">Хоосон</span>{% endif %}</td>
+                <td>{% if row.has_content %}<span class="badge bg-light-success text-success">Оруулсан</span>{% else %}<span class="badge bg-light-secondary text-secondary">Хоосон</span>{% endif %}</td>
+                <td>{% if row.is_active %}<span class="badge bg-light-success text-success">Идэвхтэй</span>{% else %}<span class="badge bg-light-warning text-warning">Идэвхгүй</span>{% endif %}</td>
+                <td class="text-end"><a href="{{ row.edit_url }}" class="btn btn-sm btn-light-primary">Засах</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

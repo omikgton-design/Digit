@@ -1,0 +1,26 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Digit Admin{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'website/admin.css' %}">
+{% endblock %}
+
+{% block branding %}
+<div class="brand-shell">
+  <div class="brand-mark">D</div>
+  <div class="brand-copy">
+    <h1 id="site-name"><a href="{% url 'admin:index' %}">Digit Admin</a></h1>
+    <p class="brand-subtitle">Management Console</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<div class="top-actions">
+  <a class="top-link" href="{% url 'admin:index' %}">Dashboard</a>
+  <a class="top-link" href="/">Website</a>
+</div>
+{% endblock %}

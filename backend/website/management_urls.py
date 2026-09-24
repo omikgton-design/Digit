@@ -1,0 +1,57 @@
+from django.urls import path
+
+from . import management_views
+
+
+app_name = "management"
+
+
+urlpatterns = [
+    path("", management_views.management_root, name="root"),
+    path("login/", management_views.management_root, name="login"),
+    path("register/", management_views.management_register, name="register"),
+    path("logout/", management_views.management_logout, name="logout"),
+    path("dashboard/", management_views.dashboard, name="dashboard"),
+    path("customers/", management_views.customer_list, name="customer_list"),
+    path("customers/organizations/", management_views.organization_list, name="organization_list"),
+    path("customers/organizations/new/", management_views.organization_create, name="organization_create"),
+    path("customers/people/", management_views.person_list, name="person_list"),
+    path("customers/people/new/", management_views.person_create, name="person_create"),
+    path("customers/new/", management_views.customer_create, name="customer_create"),
+    path("customers/<int:customer_id>/", management_views.customer_detail, name="customer_detail"),
+    path("customers/<int:customer_id>/edit/", management_views.customer_edit, name="customer_edit"),
+    path("customers/<int:customer_id>/delete/", management_views.customer_delete, name="customer_delete"),
+    path("customers/<int:customer_id>/payments/<int:payment_id>/edit/", management_views.customer_payment_edit, name="customer_payment_edit"),
+    path("customers/<int:customer_id>/payments/<int:payment_id>/delete/", management_views.customer_payment_delete, name="customer_payment_delete"),
+    path("footer-contents/", management_views.footer_content_list, name="footer_content_list"),
+    path("footer-contents/<str:key>/edit/", management_views.footer_content_edit, name="footer_content_edit"),
+    path("partners/", management_views.partner_list, name="partner_list"),
+    path("partners/new/", management_views.partner_create, name="partner_create"),
+    path("partners/<int:partner_id>/edit/", management_views.partner_edit, name="partner_edit"),
+    path("partners/<int:partner_id>/delete/", management_views.partner_delete, name="partner_delete"),
+    path("slides/", management_views.slide_list, name="slide_list"),
+    path("slides/new/", management_views.slide_create, name="slide_create"),
+    path("slides/<int:slide_id>/edit/", management_views.slide_edit, name="slide_edit"),
+    path("slides/<int:slide_id>/toggle/", management_views.slide_toggle, name="slide_toggle"),
+    path("slides/<int:slide_id>/delete/", management_views.slide_delete, name="slide_delete"),
+    path("about-sections/", management_views.about_section_list, name="about_section_list"),
+    path("about-sections/new/", management_views.about_section_create, name="about_section_create"),
+    path("about-sections/<int:section_id>/edit/", management_views.about_section_edit, name="about_section_edit"),
+    path("about-sections/<int:section_id>/toggle/", management_views.about_section_toggle, name="about_section_toggle"),
+    path("about-sections/<int:section_id>/delete/", management_views.about_section_delete, name="about_section_delete"),
+    path("softwares/", management_views.software_list, name="software_list"),
+    path("softwares/new/", management_views.software_create, name="software_create"),
+    path("softwares/<int:software_id>/edit/", management_views.software_edit, name="software_edit"),
+    path("softwares/<int:software_id>/toggle/", management_views.software_toggle, name="software_toggle"),
+    path("softwares/<int:software_id>/delete/", management_views.software_delete, name="software_delete"),
+    path("advisories/", management_views.advisory_list, name="advisory_list"),
+    path("advisories/new/", management_views.advisory_create, name="advisory_create"),
+    path("advisories/<int:advisory_id>/edit/", management_views.advisory_edit, name="advisory_edit"),
+    path("advisories/<int:advisory_id>/toggle/", management_views.advisory_toggle, name="advisory_toggle"),
+    path("advisories/<int:advisory_id>/delete/", management_views.advisory_delete, name="advisory_delete"),
+    path("articles/", management_views.article_list, name="article_list"),
+    path("articles/new/", management_views.article_create, name="article_create"),
+    path("articles/<int:article_id>/edit/", management_views.article_edit, name="article_edit"),
+    path("articles/<int:article_id>/toggle/", management_views.article_toggle, name="article_toggle"),
+    path("articles/<int:article_id>/delete/", management_views.article_delete, name="article_delete"),
+]
