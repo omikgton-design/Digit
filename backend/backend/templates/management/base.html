@@ -1,0 +1,92 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <title>{% block title %}Digit удирдлага{% endblock %}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="icon" href="{% static 'website/logo_blank.png' %}" type="image/png">
+  <link rel="stylesheet" href="{% static 'website/management.css' %}?v=20260817-3">
+  {% block extra_css %}{% endblock %}
+</head>
+<body data-pc-preset="preset-1" data-pc-direction="ltr" data-pc-theme="light">
+  <div class="loader-bg"><div class="loader-track"><div class="loader-fill"></div></div></div>
+  <nav class="pc-sidebar">
+    <div class="navbar-wrapper">
+      <div class="m-header">
+        <a href="{% url 'management:dashboard' %}" class="b-brand text-primary d-inline-flex align-items-center gap-2">
+          <img src="{% static 'website/logo.png' %}" class="img-fluid" alt="Digit" style="width: 34px; height: 34px; object-fit: contain;">
+          <span style="font-size: 24px; font-weight: 800; color: #1f2328;">Digit</span>
+        </a>
+      </div>
+      <div class="navbar-content">
+        <ul class="pc-navbar">
+          <li class="pc-item {% if current_section == 'dashboard' %}active{% endif %}">
+            <a href="{% url 'management:dashboard' %}" class="pc-link"><span class="pc-micon"><i class="ti ti-dashboard"></i></span><span class="pc-mtext">Хяналтын самбар</span></a>
+          </li>
+          <li class="pc-item pc-caption"><label>Удирдлага</label><i class="ti ti-settings"></i></li>
+          <li class="pc-item {% if current_section == 'organizations' or current_section == 'customers' %}active{% endif %}">
+            <a href="{% url 'management:organization_list' %}" class="pc-link"><span class="pc-micon"><i class="ti ti-building"></i></span><span class="pc-mtext">Байгууллага</span></a>
+          </li>
+          <li class="pc-item {% if current_section == 'people' %}active{% endif %}">
+            <a href="{% url 'management:person_list' %}" class="pc-link"><span class="pc-micon"><i class="ti ti-user"></i></span><span class="pc-mtext">Хувь хүн</span></a>
+          </li>
+          <li class="pc-item {% if current_section == 'softwares' %}active{% endif %}">
+            <a href="{% url 'management:software_list' %}" class="pc-link"><span class="pc-micon"><i class="ti ti-device-desktop-code"></i></span><span class="pc-mtext">Програм хангамж</span></a>
+          </li>
+          <li class="pc-item {% if current_section == 'advisories' %}active{% endif %}">
+            <a href="{% url 'management:advisory_list' %}" class="pc-link"><span class="pc-micon"><i class="ti ti-briefcase"></i></span><span class="pc-mtext">Зөвлөх үйлчилгээ</span></a>
+          </li>
+          <li class="pc-item {% if current_section == 'articles' %}active{% endif %}">
+            <a href="{% url 'management:article_list' %}" class="pc-link"><span class="pc-micon"><i class="ti ti-article"></i></span><span class="pc-mtext">Нийтлэл</span></a>
+          </li>
+          <li class="pc-item {% if current_section == 'footer_contents' %}active{% endif %}">
+            <a href="{% url 'management:footer_content_list' %}" class="pc-link"><span class="pc-micon"><i class="ti ti-article"></i></span><span class="pc-mtext">Хөл цэс</span></a>
+          </li>
+          <li class="pc-item {% if current_section == 'slides' %}active{% endif %}">
+            <a href="{% url 'management:slide_list' %}" class="pc-link"><span class="pc-micon"><i class="ti ti-slideshow"></i></span><span class="pc-mtext">Слайд</span></a>
+          </li>
+          <li class="pc-item {% if current_section == 'about_sections' %}active{% endif %}">
+            <a href="{% url 'management:about_section_list' %}" class="pc-link"><span class="pc-micon"><i class="ti ti-info-circle"></i></span><span class="pc-mtext">Бидний тухай</span></a>
+          </li>
+          <li class="pc-item {% if current_section == 'partners' %}active{% endif %}">
+            <a href="{% url 'management:partner_list' %}" class="pc-link"><span class="pc-micon"><i class="ti ti-building-community"></i></span><span class="pc-mtext">Хамтрагч байгууллага</span></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <header class="pc-header">
+    <div class="header-wrapper">
+      <div class="me-auto pc-mob-drp">
+        <ul class="list-unstyled">
+          <li class="pc-h-item pc-sidebar-collapse"><a href="#" class="pc-head-link ms-0" id="sidebar-hide"><i class="ti ti-menu-2"></i></a></li>
+          <li class="pc-h-item pc-sidebar-popup"><a href="#" class="pc-head-link ms-0" id="mobile-collapse"><i class="ti ti-menu-2"></i></a></li>
+        </ul>
+      </div>
+      <div class="ms-auto">
+        <ul class="list-unstyled">
+          <li class="dropdown pc-h-item header-user-profile">
+            <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+              <span class="user-avtar bg-light-primary"><i class="ti ti-user"></i></span>
+              <span>{{ request.user.username }}</span>
+            </a>
+            <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
+              <div class="dropdown-header">
+                <h6 class="mb-1">{{ request.user.get_full_name|default:request.user.username }}</h6>
+                <span>Админ хэрэглэгч</span>
+              </div>
+              <form method="post" action="{% url 'management:logout' %}">{% csrf_token %}<button type="submit" class="dropdown-item"><i class="ti ti-power"></i><span>Гарах</span></button></form>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+  <div class="pc-container"><div class="pc-content">{% include "management/includes/messages.html" %}{% block content %}{% endblock %}</div></div>
+  <footer class="pc-footer"><div class="footer-wrapper container-fluid"><div class="row"><div class="col-sm my-1"><p class="m-0">Digit удирдлагын хэсэг</p></div></div></div></footer>
+  <script src="{% static 'website/management.js' %}?v=20260817-3"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

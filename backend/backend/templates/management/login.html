@@ -1,0 +1,66 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <title>Digit админ нэвтрэх</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="icon" href="{% static 'website/logo_blank.png' %}" type="image/png">
+  <link rel="stylesheet" href="{% static 'website/management.css' %}?v=20260622-2">
+  <style>
+    body { min-height: 100vh; margin: 0; position: relative; overflow: hidden; background: #f7f9fc; }
+    .login-brand { position: fixed; top: 24px; left: 24px; z-index: 10; }
+    .login-brand-link { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: #1f2328; font-size: 20px; font-weight: 800; }
+    .login-brand-link img { width: 42px; height: 42px; object-fit: contain; }
+    .login-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; position: relative; z-index: 2; }
+    .login-card { width: 100%; max-width: 460px; margin: 0 auto; }
+    .login-card .card { margin: 0; box-shadow: 0 16px 40px rgba(17, 24, 39, 0.08); }
+    .login-art { position: fixed; inset: 0 auto 0 0; width: min(34vw, 420px); background: linear-gradient(145deg, #1677ff, #75aaff); opacity: 0.9; pointer-events: none; }
+    @media (max-width: 900px) { .login-art { width: 180px; opacity: 0.35; } .login-brand-link span { font-size: 18px; } }
+  </style>
+</head>
+<body>
+  <div class="loader-bg"><div class="loader-track"><div class="loader-fill"></div></div></div>
+  <div class="login-art"></div>
+  <div class="login-brand">
+    <a class="login-brand-link" href="{% url 'management:login' %}">
+      <img src="{% static 'website/logo.png' %}" alt="Digit logo">
+      <span>Digit</span>
+    </a>
+  </div>
+  <main class="login-shell">
+    <div class="login-card">
+      <div class="card">
+        <div class="card-body p-4 p-sm-5">
+          <div class="d-flex justify-content-between align-items-end mb-4">
+            <h3 class="mb-0"><b>Админ нэвтрэх</b></h3>
+          </div>
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+          {% endif %}
+          <form method="post">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+              {{ form.username }}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+              {{ form.password }}
+            </div>
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-primary">Нэвтрэх</button>
+            </div>
+            <div class="d-grid mt-3">
+  <a href="{% url 'management:register' %}" class="btn btn-outline-primary">
+    Бүртгүүлэх
+  </a>
+</div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

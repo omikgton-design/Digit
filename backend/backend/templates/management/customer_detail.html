@@ -1,0 +1,113 @@
+﻿{% extends "management/base.html" %}
+
+{% block title %}{{ customer.name }} | Digit{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div class="page-block">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div class="page-header-title"><h5 class="m-b-10">{{ customer.name }}</h5></div>
+          <ul class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'management:customer_list' %}">Байгууллага</a></li><li class="breadcrumb-item" aria-current="page">Дэлгэрэнгүй</li></ul>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <a href="{% url 'management:customer_edit' customer.pk %}" class="btn btn-light-primary">Байгууллага засах</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 align-items-start">
+    <div class="col-xl-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            {% if customer.logo %}<img src="{{ customer.logo.url }}" alt="{{ customer.name }}" class="wid-40 rounded">{% endif %}
+            <div>
+              <div class="fw-semibold">{{ customer.name }}</div>
+              <div class="text-muted small">{{ customer.email }}</div>
+            </div>
+          </div>
+          <div class="list-group list-group-flush">
+            <div class="list-group-item d-flex justify-content-between"><span>Нэвтрэх нэр</span><strong>{{ customer.user.username }}</strong></div>
+            <div class="list-group-item d-flex justify-content-between"><span>Одоогийн багц</span><span class="badge bg-light-secondary text-secondary">{{ customer.type|upper }}</span></div>
+            <div class="list-group-item d-flex justify-content-between"><span>Эрх</span>{% if customer.user.is_staff %}<span class="badge bg-light-primary text-primary">Админ</span>{% else %}<span class="badge bg-light-success text-success">Хэрэглэгч</span>{% endif %}</div>
+            <div class="list-group-item d-flex justify-content-between"><span>Үүсгэсэн</span><strong>{{ customer.created_date|date:"Y-m-d" }}</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h5>Хугацаа сунгах</h5></div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            {% for field in payment_form %}
+              <div class="mb-3">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+              </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Сунгалт нэмэх</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-8">
+      <div class="card tbl-card">
+        <div class="card-header"><h5>Төлбөрийн түүх</h5></div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead><tr><th class="management-index-col">№</th><th>Төлсөн огноо</th><th>Дуусах огноо</th><th>Төлбөрийн төрөл</th><th></th></tr></thead>
+              <tbody>
+                {% for payment in payments %}
+                  <tr>
+                    <td class="management-index-col">{{ payments.start_index|add:forloop.counter0 }}</td>
+                    <td>{{ payment.paid_date|date:"Y-m-d"|default:"-" }}</td>
+                    <td>{{ payment.end_date|date:"Y-m-d"|default:"-" }}</td>
+                    <td><span class="badge bg-light-secondary text-secondary">Membership {{ payment.get_membership_type_display }}</span></td>
+                    <td class="text-end"><div class="d-flex justify-content-end gap-2 flex-wrap"><a href="{% url 'management:customer_payment_edit' customer.pk payment.pk %}" class="btn btn-sm btn-light-primary">Засах</a><a href="{% url 'management:customer_payment_delete' customer.pk payment.pk %}" class="btn btn-sm btn-light-danger">Устгах</a></div></td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="5" class="text-center text-muted py-4">Төлбөрийн мэдээлэл бүртгэгдээгүй.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% include "management/includes/pagination.html" with page_obj=payments page_param="payments_page" %}
+        </div>
+      </div>
+
+      <div class="card tbl-card">
+        <div class="card-header"><h5>Оруулсан мэдээлэл</h5></div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead><tr><th class="management-index-col">№</th><th>Төрөл</th><th>Гарчиг</th><th>Ангилал</th><th>Төлөв</th><th>Онцлох</th><th>Огноо</th><th></th></tr></thead>
+              <tbody>
+                {% for row in content_rows %}
+                  <tr>
+                    <td class="management-index-col">{{ content_rows.start_index|add:forloop.counter0 }}</td>
+                    <td>{{ row.kind }}</td>
+                    <td>{{ row.title }}</td>
+                    <td>{{ row.category }}</td>
+                    <td><span class="badge {{ row.status.class }}">{{ row.status.label }}</span></td>
+                    <td>{% if row.featured %}<span class="badge bg-light-primary text-primary">Тийм</span>{% else %}<span class="badge bg-light-secondary text-secondary">Үгүй</span>{% endif %}</td>
+                    <td>{{ row.created_date|date:"Y-m-d H:i" }}</td>
+                    <td class="text-end"><a href="{{ row.edit_url }}" class="btn btn-sm btn-light-primary">Нээх</a></td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="8" class="text-center text-muted py-4">Оруулсан мэдээлэл алга.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% include "management/includes/pagination.html" with page_obj=content_rows page_param="content_page" %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

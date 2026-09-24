@@ -1,0 +1,16 @@
+{% if page_obj.has_other_pages %}
+  <div class="management-pagination">
+    {% for page_number in page_obj.elided_page_range %}
+      {% if page_number == page_obj.paginator.ELLIPSIS %}
+        <span class="management-page-ellipsis">...</span>
+      {% elif page_number == page_obj.number %}
+        <span class="management-page-link active">{{ page_number }}</span>
+      {% else %}
+        <a class="management-page-link" href="?{{ page_param }}={{ page_number }}">{{ page_number }}</a>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <a class="management-page-next" href="?{{ page_param }}={{ page_obj.next_page_number }}">Дараах »</a>
+    {% endif %}
+  </div>
+{% endif %}
