@@ -1507,9 +1507,51 @@ export function ProfilePage({
             </div> : <div className="profile-person-main"><div className="profile-section-heading"><div><h2>Тохиргоо</h2><p>Хувийн мэдээлэл болон нууц үгийн тохиргоо</p></div></div><div className="profile-settings-actions"><button className="login-submit" style={{width:"auto"}} onClick={()=>setModalMode("profile")}>Хувийн мэдээлэл засах</button><button className="profile-secondary-button" onClick={()=>setModalMode("password")}>Нууц үг солих</button></div></div>}
           </div></div>
         </div></div>
-        {modalMode ? <div className="profile-modal-backdrop" onClick={()=>setModalMode(null)}><div className="profile-modal" onClick={e=>e.stopPropagation()}><div className="profile-modal-header"><h3>{modalMode==="profile"?"Хувийн мэдээлэл шинэчлэх":"Нууц үг солих"}</h3><button type="button" onClick={()=>setModalMode(null)}>×</button></div>
-          {modalMode==="profile"?<form onSubmit={async e=>{if(await onProfileSubmit(e))setModalMode(null)}}><div className="profile-modal-body"><label>Нэр<input value={profile.name||""} onChange={e=>onProfileChange({...profile,name:e.target.value})}/></label><label>Имэйл<input type="email" value={profile.email||""} onChange={e=>onProfileChange({...profile,email:e.target.value})}/></label><label>Утас<input value={profile.phone||""} onChange={e=>onProfileChange({...profile,phone:e.target.value})}/></label></div><div className="profile-modal-actions"><button type="button" onClick={()=>setModalMode(null)}>Болих</button><button className="login-submit" disabled={loading}>{loading?"Хадгалж байна...":"Хадгалах"}</button></div></form>:<form onSubmit={async e=>{if(await onPasswordSubmit(e))setModalMode(null)}}><div className="profile-modal-body"><label>Одоогийн нууц үг<input name="current_password" type="password" required/></label><label>Шинэ нууц үг<input name="new_password" type="password" required/></label><label>Шинэ нууц үг давтах<input name="confirm_password" type="password" required/></label></div><div className="profile-modal-actions"><button type="button" onClick={()=>setModalMode(null)}>Болих</button><button className="login-submit" disabled={loading}>Нууц үг солих</button></div></form>}
-        </div></div>:null}
+        {modalMode ? (
+          <div className="profile-modal-backdrop" onClick={() => setModalMode(null)}>
+            <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="profile-modal-header">
+                <h3>{modalMode === "profile" ? "Хувийн мэдээлэл шинэчлэх" : "Нууц үг солих"}</h3>
+                <button className="profile-modal-close" type="button" onClick={() => setModalMode(null)}>×</button>
+              </div>
+
+              {modalMode === "profile" ? (
+                <form className="profile-edit-form" onSubmit={async (e) => { if (await onProfileSubmit(e)) setModalMode(null); }}>
+                  <div className="profile-edit-grid">
+                    <label className="profile-edit-field">
+                      <span>Нэр</span>
+                      <input value={profile.name || ""} onChange={(e) => onProfileChange({ ...profile, name: e.target.value })} required />
+                    </label>
+                    <label className="profile-edit-field">
+                      <span>Имэйл</span>
+                      <input type="email" value={profile.email || ""} onChange={(e) => onProfileChange({ ...profile, email: e.target.value })} required />
+                    </label>
+                    <label className="profile-edit-field">
+                      <span>Утас</span>
+                      <input value={profile.phone || ""} onChange={(e) => onProfileChange({ ...profile, phone: e.target.value })} />
+                    </label>
+                  </div>
+                  <div className="profile-edit-actions">
+                    <button className="login-submit" type="submit" disabled={loading}>
+                      {loading ? "Хадгалж байна..." : "Мэдээлэл шинэчлэх"}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <form className="profile-edit-form" onSubmit={async (e) => { if (await onPasswordSubmit(e)) setModalMode(null); }}>
+                  <div className="profile-edit-grid profile-password-grid">
+                    <label className="profile-edit-field"><span>Одоогийн нууц үг</span><input name="current_password" type="password" required /></label>
+                    <label className="profile-edit-field"><span>Шинэ нууц үг</span><input name="new_password" type="password" required /></label>
+                    <label className="profile-edit-field"><span>Шинэ нууц үг давтах</span><input name="confirm_password" type="password" required /></label>
+                  </div>
+                  <div className="profile-edit-actions">
+                    <button className="login-submit" type="submit" disabled={loading}>{loading ? "Хадгалж байна..." : "Нууц үг солих"}</button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        ) : null}
       </section>
     );
    }
@@ -1574,8 +1616,8 @@ export function ProfilePage({
 
       <button
         type="button"
-        className="profile-side-nav-item profile-side-nav-profile"
-        onClick={() => setModalMode("profile")}
+        className={`profile-side-nav-item profile-side-nav-profile ${activeTab === "orgProfile" ? "active" : ""}`}
+        onClick={() => setActiveTab("orgProfile")}
       >
         <span className="profile-side-nav-icon">♙</span>
         <span>Байгууллагын профайл</span>
@@ -1647,13 +1689,60 @@ export function ProfilePage({
           <div className="profile-main">
   <div className="profile-card profile-card-main">
 
-    {activeTab !== "overview" ? (
+    {activeTab !== "overview" && activeTab !== "orgProfile" ? (
       <div className="profile-header">
         <h2>{activeTabItem.title}</h2>
       </div>
     ) : null}
 
-    {activeTab === "overview" ? (
+    {activeTab === "orgProfile" ? (
+      <div className="profile-org-overview">
+        <div className="profile-org-overview-heading">
+          <div>
+            <span>БАЙГУУЛЛАГЫН ПРОФАЙЛ</span>
+            <h2>Байгууллагын мэдээлэл</h2>
+            <p>Таны байгууллагын үндсэн болон холбоо барих мэдээлэл</p>
+          </div>
+          <button type="button" className="profile-org-inline-edit" onClick={() => setModalMode("profile")}>Засах</button>
+        </div>
+
+        <div className="profile-org-info-grid">
+          <section className="profile-org-info-card">
+            <div className="profile-org-info-card-head"><span>▣</span><h3>Үндсэн мэдээлэл</h3></div>
+            <dl>
+              <div><dt>Байгууллагын нэр</dt><dd>{profile.name || "—"}</dd></div>
+              <div><dt>И-мэйл</dt><dd>{profile.email || "—"}</dd></div>
+              <div><dt>Утас</dt><dd>{profile.phone || "—"}</dd></div>
+              <div><dt>Вэбсайт</dt><dd>{profile.website || "—"}</dd></div>
+            </dl>
+          </section>
+
+          <section className="profile-org-info-card profile-org-logo-card">
+            <div className="profile-org-info-card-head"><span>◉</span><h3>Лого / профайл зураг</h3></div>
+            <div className="profile-org-logo-preview">
+              {profile.logo_url ? <img src={profile.logo_url} alt={profile.name || "Logo"} /> : <span>{(profile.name || "D").slice(0,1)}</span>}
+              <div><strong>{profile.name || "Байгууллага"}</strong><small>Байгууллагын таних зураг</small></div>
+            </div>
+            <button type="button" className="profile-org-upload-button" onClick={() => fileInputRef.current?.click()}>Зураг солих</button>
+          </section>
+
+          <section className="profile-org-info-card">
+            <div className="profile-org-info-card-head"><span>⌖</span><h3>Холбоо барих мэдээлэл</h3></div>
+            <dl>
+              <div><dt>Холбоо барих хүн</dt><dd>{profile.contact_person_name || "—"}</dd></div>
+              <div><dt>Холбоо барих утас</dt><dd>{profile.contact_person_phone || "—"}</dd></div>
+              <div className="profile-org-wide-row"><dt>Хаяг</dt><dd>{profile.address || "—"}</dd></div>
+            </dl>
+          </section>
+
+          <section className="profile-org-info-card profile-org-note-card">
+            <div className="profile-org-info-card-head"><span>✓</span><h3>Профайлын төлөв</h3></div>
+            <p>Энд харагдаж буй мэдээллийг дээд талын “Профайл засах” товч эсвэл “Засах” товчоор шинэчилж болно.</p>
+            <button type="button" className="profile-org-inline-edit secondary" onClick={() => setModalMode("profile")}>Профайл засах</button>
+          </section>
+        </div>
+      </div>
+    ) : activeTab === "overview" ? (
       renderSoftwareTab()
     ) : activeTab === "contact" ? (
       renderAdvisoryTab()

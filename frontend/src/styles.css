@@ -6249,3 +6249,32 @@ body {
 .profile-payment-modal-actions button { border:1px solid #3b414a; border-radius:9px; background:transparent; color:#fff; padding:11px 18px; font:inherit; font-weight:700; cursor:pointer; }
 @media (max-width:1050px){ .profile-payment-stat-grid{grid-template-columns:repeat(2,1fr)} .profile-payment-actions{grid-template-columns:repeat(2,1fr)} }
 @media (max-width:700px){ .profile-payment-reference{margin:0 16px 22px;padding:18px} .profile-payment-stat-grid{grid-template-columns:1fr} .profile-payment-history-head{align-items:stretch;flex-direction:column} .profile-payment-filters{flex-wrap:wrap} .profile-payment-actions{grid-template-columns:1fr} .profile-payment-package-grid{grid-template-columns:1fr} }
+
+/* Organization profile overview */
+.profile-org-overview { padding: 28px; }
+.profile-org-overview-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; margin-bottom:24px; padding-bottom:22px; border-bottom:1px solid #ececf0; }
+.profile-org-overview-heading span { display:block; margin-bottom:7px; color:#ef7d18; font-size:11px; font-weight:800; letter-spacing:.1em; }
+.profile-org-overview-heading h2 { margin:0; color:#24262b; font-size:27px; }
+.profile-org-overview-heading p { margin:7px 0 0; color:#8b8f98; }
+.profile-org-inline-edit { border:0; border-radius:10px; background:#ef7d18; color:#fff; padding:11px 20px; font:inherit; font-weight:700; cursor:pointer; }
+.profile-org-inline-edit.secondary { margin-top:16px; background:#fff; color:#ef7d18; border:1px solid #ef7d18; }
+.profile-org-info-grid { display:grid; grid-template-columns:1.25fr .75fr; gap:18px; }
+.profile-org-info-card { min-width:0; padding:22px; border:1px solid #e7e8ec; border-radius:15px; background:#fff; box-shadow:0 8px 24px rgba(25,30,40,.035); }
+.profile-org-info-card-head { display:flex; align-items:center; gap:10px; margin-bottom:19px; }
+.profile-org-info-card-head > span { width:34px; height:34px; display:grid; place-items:center; border-radius:9px; background:#fff2e7; color:#ef7d18; font-weight:800; }
+.profile-org-info-card-head h3 { margin:0; color:#2d3035; font-size:17px; }
+.profile-org-info-card dl { display:grid; grid-template-columns:1fr 1fr; gap:0 26px; margin:0; }
+.profile-org-info-card dl > div { padding:13px 0; border-bottom:1px solid #f0f0f2; }
+.profile-org-info-card dt { margin-bottom:5px; color:#92969e; font-size:12px; }
+.profile-org-info-card dd { margin:0; color:#303238; font-weight:650; overflow-wrap:anywhere; }
+.profile-org-wide-row { grid-column:1 / -1; }
+.profile-org-logo-preview { display:flex; align-items:center; gap:14px; padding:16px; border:1px solid #eeeeF1; border-radius:13px; background:#fafafa; }
+.profile-org-logo-preview img, .profile-org-logo-preview > span { width:62px; height:62px; flex:0 0 62px; border-radius:14px; object-fit:cover; display:grid; place-items:center; background:#fff1e5; color:#ef7d18; font-size:24px; font-weight:800; }
+.profile-org-logo-preview div { display:flex; min-width:0; flex-direction:column; gap:4px; }
+.profile-org-logo-preview strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#303238; }
+.profile-org-logo-preview small { color:#969aa2; }
+.profile-org-upload-button { width:100%; margin-top:12px; padding:10px 14px; border:1px solid #e1e2e6; border-radius:10px; background:#fff; color:#4b4e55; font:inherit; font-weight:650; cursor:pointer; }
+.profile-org-note-card p { margin:0; color:#777c85; line-height:1.65; }
+.profile-side-nav-profile.active { background:#fff2e7; color:#ef7d18; }
+@media (max-width: 900px) { .profile-org-info-grid { grid-template-columns:1fr; } }
+@media (max-width: 620px) { .profile-org-overview { padding:18px; } .profile-org-overview-heading { flex-direction:column; } .profile-org-inline-edit { width:100%; } .profile-org-info-card dl { grid-template-columns:1fr; } .profile-org-wide-row { grid-column:auto; } }
