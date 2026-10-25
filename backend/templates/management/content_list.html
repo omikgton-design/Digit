@@ -1,0 +1,62 @@
+{% extends "management/base.html" %}
+
+{% block title %}{{ page_title }} | Digit{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div class="page-block"><div class="row align-items-center"><div class="col-md-6"><div class="page-header-title"><h5 class="m-b-10">{{ page_title }}</h5></div></div><div class="col-md-6 text-md-end"><a href="{{ create_url }}" class="btn btn-primary">Шинээр нэмэх</a></div></div></div>
+  </div>
+  <div class="card tbl-card">
+    <div class="card-body">
+      <form method="get" class="mgmt-filter js-live-filter" role="search">
+        <div class="mgmt-filter-search">
+          <input type="search" name="q" value="{{ filter_query }}" class="form-control" placeholder="Нэр, байгууллагын нэрээр хайх..." autocomplete="off" aria-label="Хайх">
+          {% if filter_query %}<a class="mgmt-filter-clear js-clear-search" href="?{% if filter_category %}category={{ filter_category }}&{% endif %}{% if filter_status %}status={{ filter_status }}{% endif %}" aria-label="Хайлт арилгах" title="Хайлт арилгах">✕</a>{% endif %}
+        </div>
+        <select name="category" class="form-select" aria-label="Ангилал">
+          <option value="">Бүх ангилал</option>
+          {% for option in category_options %}
+            <option value="{{ option.value }}" {% if option.value == filter_category %}selected{% endif %}>{{ option.label }}</option>
+          {% endfor %}
+        </select>
+        <select name="status" class="form-select" aria-label="Төлөв">
+          <option value="">Бүх төлөв</option>
+          <option value="approved" {% if filter_status == 'approved' %}selected{% endif %}>Нийтлэгдсэн</option>
+          <option value="pending" {% if filter_status == 'pending' %}selected{% endif %}>Хянагдаж байна</option>
+          <option value="featured" {% if filter_status == 'featured' %}selected{% endif %}>Онцлох</option>
+        </select>
+        {% if filter_active %}<a href="?" class="btn btn-light-secondary">Шүүлтүүр арилгах</a>{% endif %}
+        <noscript><button type="submit" class="btn btn-light-primary">Хайх</button></noscript>
+        <span class="mgmt-filter-count">{% if filter_active %}{{ result_count }} / {{ total_count }} илэрц{% else %}Нийт {{ result_count }}{% endif %}</span>
+      </form>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 mgmt-table">
+          <thead><tr><th class="management-index-col">№</th><th>Гарчиг</th><th>Эзэмшигч</th><th class="mgmt-hide-sm">Төрөл</th><th>Төлөв</th><th class="mgmt-hide-sm">Онцлох</th><th class="mgmt-hide-sm">Үүсгэсэн</th><th class="text-end">Үйлдэл</th></tr></thead>
+          <tbody>
+            {% for row in rows %}
+              <tr>
+                <td class="management-index-col">{{ rows.start_index|add:forloop.counter0 }}</td>
+                <td class="mgmt-cell-title fw-semibold">{{ row.title }}</td>
+                <td>{{ row.owner }}</td>
+                <td class="mgmt-hide-sm">{{ row.category }}</td>
+                <td><span class="badge {{ row.status.class }}">{{ row.status.label }}</span></td>
+                <td class="mgmt-hide-sm">{% if row.featured %}<span class="badge bg-light-primary text-primary">Тийм</span>{% else %}<span class="badge bg-light-secondary text-secondary">Үгүй</span>{% endif %}</td>
+                <td class="mgmt-hide-sm">{{ row.created_date|date:"Y-m-d H:i" }}</td>
+                <td class="text-end">
+                  <div class="mgmt-actions">
+                    <a href="{{ row.edit_url }}" class="btn btn-sm btn-light-primary">Засах</a>
+                    <a href="{{ row.toggle_url }}" class="btn btn-sm btn-light-warning">Төлөв солих</a>
+                    <a href="{{ row.delete_url }}" class="btn btn-sm btn-light-danger">Устгах</a>
+                  </div>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="8" class="text-center text-muted py-4">Мэдээлэл олдсонгүй.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% include "management/includes/pagination.html" with page_obj=rows page_param="page" extra_query=extra_query %}
+    </div>
+  </div>
+{% endblock %}

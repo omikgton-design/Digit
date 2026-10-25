@@ -1,0 +1,54 @@
+{% extends "management/base.html" %}
+
+{% block title %}{{ page_title }} | Digit{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div class="page-block"><div class="row align-items-center"><div class="col-md-6"><div class="page-header-title"><h5 class="m-b-10">{{ page_title }}</h5></div></div><div class="col-md-6 text-md-end"><a href="{% url 'management:footer_link_create' %}" class="btn btn-primary">Шинээр нэмэх</a></div></div></div>
+  </div>
+
+  {% for group in groups %}
+    <div class="card tbl-card">
+      <div class="card-body">
+        <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+          <h6 class="mb-0">{{ group.label }} багана</h6>
+          <a href="{{ group.create_url }}" class="btn btn-sm btn-light-primary ms-auto">+ Холбоос нэмэх</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0 mgmt-table">
+            <thead><tr><th class="management-index-col">№</th><th>Нэр</th><th>Холбоос</th><th>Дараалал</th><th>Төлөв</th><th class="text-end">Үйлдэл</th></tr></thead>
+            <tbody>
+              {% for link in group.links %}
+                <tr class="{% if not link.is_active %}mgmt-row-muted{% endif %}">
+                  <td class="management-index-col">{{ forloop.counter }}</td>
+                  <td class="fw-semibold">{{ link.label }}</td>
+                  <td><code class="small">{{ link.url }}</code></td>
+                  <td>
+                    <div class="mgmt-order">
+                      <span class="mgmt-order-num">{{ link.sort_order }}</span>
+                      <form method="post" action="{% url 'management:footer_link_move' link.pk %}">{% csrf_token %}
+                        <button type="submit" name="direction" value="up" class="mgmt-icon-btn" title="Дээш" aria-label="Дээш">↑</button>
+                        <button type="submit" name="direction" value="down" class="mgmt-icon-btn" title="Доош" aria-label="Доош">↓</button>
+                      </form>
+                    </div>
+                  </td>
+                  <td>{% if link.is_active %}<span class="badge bg-light-success text-success">Идэвхтэй</span>{% else %}<span class="badge bg-light-secondary text-secondary">Идэвхгүй</span>{% endif %}</td>
+                  <td class="text-end">
+                    <div class="mgmt-actions">
+                      <a href="{% url 'management:footer_link_edit' link.pk %}" class="btn btn-sm btn-light-primary">Засах</a>
+                      <form method="post" action="{% url 'management:footer_link_toggle' link.pk %}">{% csrf_token %}<button type="submit" class="btn btn-sm btn-light-warning">Төлөв солих</button></form>
+                      <a href="{% url 'management:footer_link_delete' link.pk %}" class="btn btn-sm btn-light-danger">Устгах</a>
+                    </div>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="6" class="text-center text-muted py-4">Холбоос бүртгэгдээгүй байна.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  <p class="text-muted small">Хөл цэсний холбоос дээр дарахад тухайн дэлгэц рүү шилжинэ. Сайт доторх хаяг «/»-ээр эхэлнэ (жишээ: <code>/footer/top_software</code>, <code>/company#about</code>, <code>/softwares</code>).</p>
+{% endblock %}

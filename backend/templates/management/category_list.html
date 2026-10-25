@@ -1,0 +1,93 @@
+{% extends "management/base.html" %}
+
+{% block title %}{{ page_title }} | Digit{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div class="page-block"><div class="row align-items-center"><div class="col-md-6"><div class="page-header-title"><h5 class="m-b-10">{{ page_title }}</h5></div></div><div class="col-md-6 text-md-end"><a href="{{ create_url }}" class="btn btn-primary">Шинээр нэмэх</a></div></div></div>
+  </div>
+
+  <div class="mgmt-tabs" role="tablist">
+    {% for key, label in tabs %}
+      <a role="tab" class="mgmt-tab {% if key == tab %}is-active{% endif %}" href="?type={{ key }}">{{ label }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="card tbl-card">
+    <div class="card-body">
+      <form method="get" class="mgmt-filter js-live-filter" role="search">
+        <input type="hidden" name="type" value="{{ tab }}">
+        <div class="mgmt-filter-search">
+          <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="Нэр, тайлбараар хайх..." autocomplete="off" aria-label="Хайх">
+          {% if query %}<a class="mgmt-filter-clear" href="?type={{ tab }}{% if status %}&status={{ status }}{% endif %}" aria-label="Хайлт арилгах" title="Хайлт арилгах">✕</a>{% endif %}
+        </div>
+        <select name="status" class="form-select" aria-label="Төлөв">
+          <option value="">Бүх төлөв</option>
+          <option value="active" {% if status == 'active' %}selected{% endif %}>Идэвхтэй</option>
+          <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Идэвхгүй</option>
+        </select>
+        <noscript><button type="submit" class="btn btn-light-primary">Хайх</button></noscript>
+      </form>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 mgmt-table">
+          <thead>
+            <tr>
+              <th class="management-index-col">№</th>
+              <th>Нэр</th>
+              <th class="mgmt-hide-sm">Тайлбар</th>
+              <th>Дараалал</th>
+              <th class="mgmt-hide-sm">Ашиглалт</th>
+              <th>Төлөв</th>
+              <th class="text-end">Үйлдэл</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in rows %}
+              {% with item=row.obj %}
+              <tr class="{% if row.level %}mgmt-row-child{% endif %} {% if not item.is_active %}mgmt-row-muted{% endif %}">
+                <td class="management-index-col">{{ forloop.counter }}</td>
+                <td>
+                  <div class="fw-semibold {% if row.level %}mgmt-indent{% endif %}">{% if row.level %}<span class="text-muted" aria-hidden="true">└ </span>{% endif %}{{ row.name }}</div>
+                  {% if row.extra %}<div class="text-muted small">{{ row.extra }}</div>{% endif %}
+                  {% if row.child_count %}<div class="text-muted small">{{ row.child_count }} дэд ангилал</div>{% endif %}
+                </td>
+                <td class="mgmt-hide-sm"><span class="text-muted small">{{ item.description|default:"-"|truncatechars:80 }}</span></td>
+                <td>
+                  <div class="mgmt-order">
+                    <span class="mgmt-order-num">{{ item.sort_order }}</span>
+                    <form method="post" action="{% if is_service_type %}{% url 'management:service_type_move' item.pk %}{% else %}{% url 'management:category_move' item.pk %}{% endif %}">
+                      {% csrf_token %}<input type="hidden" name="next" value="{{ current_url }}">
+                      <button type="submit" name="direction" value="up" class="mgmt-icon-btn" title="Дээш" aria-label="Дээш">↑</button>
+                      <button type="submit" name="direction" value="down" class="mgmt-icon-btn" title="Доош" aria-label="Доош">↓</button>
+                    </form>
+                  </div>
+                </td>
+                <td class="mgmt-hide-sm">{{ row.usage }}</td>
+                <td>{% if item.is_active %}<span class="badge bg-light-success text-success">Идэвхтэй</span>{% else %}<span class="badge bg-light-secondary text-secondary">Идэвхгүй</span>{% endif %}</td>
+                <td class="text-end">
+                  <div class="mgmt-actions">
+                    {% if is_service_type %}
+                      <a href="{% url 'management:service_type_edit' item.pk %}" class="btn btn-sm btn-light-primary">Засах</a>
+                      <form method="post" action="{% url 'management:service_type_toggle' item.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ current_url }}"><button type="submit" class="btn btn-sm btn-light-warning">{% if item.is_active %}Идэвхгүй болгох{% else %}Идэвхжүүлэх{% endif %}</button></form>
+                      <a href="{% url 'management:service_type_delete' item.pk %}" class="btn btn-sm btn-light-danger">Устгах</a>
+                    {% else %}
+                      {% if not row.level %}<a href="{% url 'management:category_create' %}?type={{ item.type }}&parent={{ item.pk }}" class="btn btn-sm btn-light">+ Дэд</a>{% endif %}
+                      <a href="{% url 'management:category_edit' item.pk %}" class="btn btn-sm btn-light-primary">Засах</a>
+                      <form method="post" action="{% url 'management:category_toggle' item.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ current_url }}"><button type="submit" class="btn btn-sm btn-light-warning">{% if item.is_active %}Идэвхгүй болгох{% else %}Идэвхжүүлэх{% endif %}</button></form>
+                      <a href="{% url 'management:category_delete' item.pk %}" class="btn btn-sm btn-light-danger">Устгах</a>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+              {% endwith %}
+            {% empty %}
+              <tr><td colspan="7" class="text-center text-muted py-4">Мэдээлэл олдсонгүй.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted small mt-3 mb-0">Энд хийсэн өөрчлөлт (нэр, дараалал, идэвхтэй эсэх) вэбсайтын цэс, шүүлтүүр, нүүр хуудсанд автоматаар харагдана. Идэвхгүй ангилал вэбсайт дээр харагдахгүй.</p>
+    </div>
+  </div>
+{% endblock %}

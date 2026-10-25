@@ -1,0 +1,52 @@
+{% extends "management/base.html" %}
+
+{% block title %}{{ page_title }} | Digit{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div class="page-block"><div class="row align-items-center">
+      <div class="col-md-5"><div class="page-header-title"><h5 class="m-b-10">{{ page_title }}</h5></div></div>
+      <div class="col-md-7 text-md-end d-flex gap-2 justify-content-md-end flex-wrap">
+        <a href="{% url 'management:comment_create' %}?kind=software" class="btn btn-primary">Програмд сэтгэгдэл нэмэх</a>
+        <a href="{% url 'management:comment_create' %}?kind=advisory" class="btn btn-outline-primary">Зөвлөх үйлчилгээнд нэмэх</a>
+      </div>
+    </div></div>
+  </div>
+  <div class="card tbl-card">
+    <div class="card-body">
+      <form method="get" class="row g-2 mb-3">
+        <div class="col-md-4"><input type="search" name="q" value="{{ query }}" class="form-control" placeholder="Сэтгэгдэл, хэрэглэгч, нэрээр хайх"></div>
+        <div class="col-md-3">
+          <select name="kind" class="form-select">
+            <option value="">Бүгд</option>
+            <option value="software"{% if kind_filter == 'software' %} selected{% endif %}>Програм хангамж</option>
+            <option value="advisory"{% if kind_filter == 'advisory' %} selected{% endif %}>Зөвлөх үйлчилгээ</option>
+          </select>
+        </div>
+        <div class="col-auto"><button type="submit" class="btn btn-light-primary">Хайх</button></div>
+      </form>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead><tr><th class="management-index-col">№</th><th>Төрөл</th><th>Холбогдох</th><th>Хэрэглэгч</th><th>Үнэлгээ</th><th>Сэтгэгдэл</th><th>Огноо</th><th></th></tr></thead>
+          <tbody>
+            {% for row in rows %}
+              <tr>
+                <td class="management-index-col">{{ rows.start_index|add:forloop.counter0 }}</td>
+                <td><span class="badge bg-light-secondary text-secondary">{{ row.kind_label }}</span></td>
+                <td>{{ row.target_name }}</td>
+                <td>{{ row.user_label }}</td>
+                <td>★ {{ row.score }}</td>
+                <td style="max-width: 320px;">{{ row.comment|truncatechars:120 }}</td>
+                <td>{{ row.update_date|date:"Y-m-d H:i" }}</td>
+                <td class="text-end"><div class="d-flex justify-content-end gap-2 flex-wrap"><a href="{{ row.edit_url }}" class="btn btn-sm btn-light-primary">Засах</a><a href="{{ row.delete_url }}" class="btn btn-sm btn-light-danger">Устгах</a></div></td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="8" class="text-center text-muted py-4">Сэтгэгдэл олдсонгүй.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% include "management/includes/pagination.html" with page_obj=rows page_param="page" %}
+    </div>
+  </div>
+{% endblock %}

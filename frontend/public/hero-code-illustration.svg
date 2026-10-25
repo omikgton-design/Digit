@@ -1,0 +1,89 @@
+<svg viewBox="0 0 1920 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#050a12"/>
+      <stop offset="55%" stop-color="#081422"/>
+      <stop offset="100%" stop-color="#03060a"/>
+    </linearGradient>
+
+    <radialGradient id="coreGlow" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#2fa8d8" stop-opacity="0.28"/>
+      <stop offset="50%" stop-color="#1c6fa0" stop-opacity="0.09"/>
+      <stop offset="100%" stop-color="#1c6fa0" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="wisp" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#8fd6ff" stop-opacity="0.5"/>
+      <stop offset="45%" stop-color="#5fb3e0" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#5fb3e0" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="34"/>
+    </filter>
+    <filter id="softer" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="55"/>
+    </filter>
+
+    <linearGradient id="vignette" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.55"/>
+      <stop offset="30%" stop-color="#000000" stop-opacity="0.05"/>
+      <stop offset="70%" stop-color="#000000" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.55"/>
+    </linearGradient>
+    <linearGradient id="vignetteV" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="20%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="80%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.45"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1920" height="800" fill="url(#bg)"/>
+  <rect width="1920" height="800" fill="url(#coreGlow)"/>
+
+  <!-- back layer of drifting code, dim -->
+  <g font-family="Consolas, Menlo, monospace" font-size="20" fill="#bfe6ff" opacity="0.28">
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -18; 0 0" dur="18s" repeatCount="indefinite"/>
+    </g>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="19" fill="#8fd0f2" opacity="0.16">
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 14; 0 0" dur="24s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- drifting smoke wisps: soft blurred radial blobs, layered + animated -->
+  <g filter="url(#softer)">
+    <ellipse cx="560" cy="300" rx="260" ry="150" fill="url(#wisp)" opacity="0.55">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 90 -30; 40 20; 0 0" dur="28s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="1350" cy="470" rx="300" ry="170" fill="url(#wisp)" opacity="0.45">
+      <animateTransform attributeName="transform" type="translate" values="0 0; -70 25; -20 -15; 0 0" dur="34s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="980" cy="600" rx="240" ry="130" fill="url(#wisp)" opacity="0.4">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 50 20; -30 -10; 0 0" dur="24s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+  <g filter="url(#soft)">
+    <ellipse cx="760" cy="380" rx="170" ry="90" fill="url(#wisp)" opacity="0.5">
+      <animateTransform attributeName="transform" type="translate" values="0 0; -60 15; 30 -10; 0 0" dur="20s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="1180" cy="260" rx="150" ry="80" fill="url(#wisp)" opacity="0.35">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 40 -20; -20 10; 0 0" dur="22s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="500" cy="560" rx="180" ry="95" fill="url(#wisp)" opacity="0.3">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 30 -25; -40 15; 0 0" dur="26s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+
+  <!-- crisp foreground code, catching the light through the haze -->
+  <g font-family="Consolas, Menlo, monospace" font-size="19" fill="#eaf7ff" opacity="0.62">
+    <animateTransform attributeName="transform" type="translate" values="0 0; 6 -10; 0 0" dur="14s" repeatCount="indefinite"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="17" fill="#bfe6ff" opacity="0.4">
+    <animateTransform attributeName="transform" type="translate" values="0 0; -8 8; 0 0" dur="17s" repeatCount="indefinite"/>
+  </g>
+
+  <rect width="1920" height="800" fill="url(#vignette)"/>
+  <rect width="1920" height="800" fill="url(#vignetteV)"/>
+</svg>

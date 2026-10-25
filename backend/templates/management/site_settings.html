@@ -1,0 +1,41 @@
+{% extends "management/base.html" %}
+
+{% block title %}{{ page_title }} | Digit{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div class="page-block"><div class="row align-items-center"><div class="col-md-12"><div class="page-header-title"><h5 class="m-b-10">{{ page_title }}</h5></div></div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mgmt-logo-grid">
+          {% for field in form %}
+            {% if field.name != 'footer_text' %}
+              <div class="mgmt-logo-slot">
+                <label class="form-label d-block" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <div class="mgmt-logo-preview {% if field.name == 'footer_logo' %}is-dark{% endif %}">
+                  {% if field.name == 'footer_logo' and site.footer_logo %}<img src="{{ site.footer_logo.url }}" alt="Хөл хэсгийн лого">
+                  {% elif field.name == 'header_logo' and site.header_logo %}<img src="{{ site.header_logo.url }}" alt="Толгой хэсгийн лого">
+                  {% elif field.name == 'header_logo_scrolled' and site.header_logo_scrolled %}<img src="{{ site.header_logo_scrolled.url }}" alt="Толгой хэсгийн лого">
+                  {% else %}<span class="text-muted small">Одоогийн (өгөгдмөл) лого ашиглагдаж байна</span>{% endif %}
+                </div>
+                {{ field }}
+                {% if field.help_text %}<div class="text-muted small mt-1">{{ field.help_text }}</div>{% endif %}
+                {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div class="mb-3 mt-3">
+          <label class="form-label" for="{{ form.footer_text.id_for_label }}">{{ form.footer_text.label }}</label>
+          {{ form.footer_text }}
+          <div class="text-muted small mt-1">{{ form.footer_text.help_text }}</div>
+        </div>
+        <p class="text-muted small">Лого солиход харьцаа нь хадгалагдаж, компьютер болон гар утасны дэлгэцэд зохих хэмжээгээр автоматаар харагдана. Тунгалаг дэвсгэртэй PNG зөвлөмжтэй (2MB хүртэл). Өгөгдмөл лого руу буцаах бол файлын талбарын дэргэдэх устгах (Clear) сонголтыг чагтлаад хадгална.</p>
+        <button type="submit" class="btn btn-primary">Хадгалах</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
